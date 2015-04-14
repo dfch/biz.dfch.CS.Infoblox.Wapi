@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>biz.dfch.CS.Infoblox.Wapi</id>
+    <version>1.0.0</version>
+    <authors>Ronald Rink, d-fens GmbH</authors>
+    <owners>Ronald Rink, d-fens GmbH</owners>
+    <licenseUrl>https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/dfch/fragments/master/logo-32x32.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>biz.dfch.PS.Cumulus.Utilities
+=============================
+
+Module: biz.dfch.CS.Infoblox.Wapi
+
+d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
+
+This package contains a very simple object mapper for the IPAM Infoblox WAPI (REST API).
+
+See https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi
+
+See https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi or the supplied UnitTests for a detailed description on how to use the assemlby.</description>
+	<summary>This package contains a very simple object mapper for the IPAM Infoblox WAPI (REST API).</summary>
+	<releaseNotes>Initial release as a NuGet package</releaseNotes>
+    <copyright>Copyright 2014-2015 Ronald Rink, d-fens GmbH</copyright>
+    <tags>dfch IPAM Infoblox WAPI REST</tags>
+    <dependencies>
+      <dependency id="log4net" version="2.0.3" />
+      <dependency id="Newtonsoft.Json" version="6.0.8" />
+    </dependencies>
+  </metadata>
+</package>
