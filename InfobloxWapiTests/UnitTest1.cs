@@ -1,8 +1,8 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using biz.dfch.CS.Infoblox.Wapi;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "InfobloxWapiTests.dll.config", Watch = true)]
 namespace biz.dfch.CS.Infoblox.Wapi
@@ -131,6 +131,54 @@ namespace biz.dfch.CS.Infoblox.Wapi
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(JsonException))]
+        public void doParseMissingContentFieldThrowsJsonException()
+        {
+            var contentError = @"
+                {
+                    ""Error-field-is-missing"" : ""myError""
+                    ,
+                    ""code""  : 500
+                    ,
+                    ""text""  : ""some nifty text""
+                }
+            ";
+            JToken jv = JObject.Parse(contentError);
+            var MessageError = jv.SelectToken("Error", true).ToString();
+        }
+        [TestMethod]
+        [ExpectedException(typeof(JsonReaderException))]
+        public void doParseInvalidJsonThrowsJsonReaderException()
+        {
+            var contentError = @"
+                {
+                    this is - not - a valid JSON string!!!!
+                }
+            ";
+            JToken jv = JObject.Parse(contentError);
+            var MessageError = jv.SelectToken("Error", true).ToString();
+        }
+        [TestMethod]
+        public void doParseContentErrorReturnsTrue()
+        {
+            var contentError = @"
+                {
+                    ""Error"" : ""myError""
+                    ,
+                    ""code""  : 500
+                    ,
+                    ""text""  : ""some nifty text""
+                }
+            ";
+            JToken jv = JObject.Parse(contentError);
+            var MessageError = jv.SelectToken("Error", true).ToString();
+            var MessageCode = jv.SelectToken("code", true).ToString();
+            var MessageText = jv.SelectToken("text", true).ToString();
+            Assert.IsNotNull(MessageError);
+            Assert.IsNotNull(MessageCode);
+            Assert.IsNotNull(MessageText);
         }
     }
 }

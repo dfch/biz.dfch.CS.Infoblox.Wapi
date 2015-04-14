@@ -1,8 +1,8 @@
-﻿using StringValueAttributeExtension;
+﻿using Newtonsoft.Json.Linq;
+using StringValueAttributeExtension;
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Json;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,13 +23,17 @@ namespace biz.dfch.CS.Infoblox.Wapi
         public enum ReturnTypes
         {
             [StringValue("default")]
-            Default = 0,
+            Default = 0
+            ,
             [StringValue("json")]
-            Json,
+            Json
+            ,
             [StringValue("json-pretty")]
-            JsonPretty,
+            JsonPretty
+            ,
             [StringValue("xml")]
-            Xml,
+            Xml
+            ,
             [StringValue("xml-pretty")]
             XmlPretty
         }
@@ -67,7 +71,6 @@ namespace biz.dfch.CS.Infoblox.Wapi
             set { _Version = value; }
         }
 
-        //public NetworkCredential Credential = (NetworkCredential)CredentialCache.DefaultCredentials;
         private NetworkCredential _Credential;
         private String _CredentialBase64;
         public NetworkCredential Credential
@@ -77,14 +80,13 @@ namespace biz.dfch.CS.Infoblox.Wapi
             }
             set { 
                 _Credential = value ?? (new NetworkCredential(String.Empty, String.Empty)); 
-                byte[] abCredential = System.Text.UTF8Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _Credential.UserName, _Credential.Password));
+                var abCredential = System.Text.UTF8Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _Credential.UserName, _Credential.Password));
                 _CredentialBase64 = Convert.ToBase64String(abCredential);
             }
         }
         public void SetCredential(String Username, String Password) 
         {
-            var nc = new NetworkCredential(Username, Password);
-            this.Credential = nc;
+            this.Credential = new NetworkCredential(Username, Password);
         }
 
         private int _TimeoutSec;
@@ -123,7 +125,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
             QueryParameters = QueryParameters ?? (new Hashtable());
 
             Debug.WriteLine(String.Format("Invoke: UriServer '{0}'. TimeoutSec '{1}'. Method '{2}'. Uri '{3}'. ReturnType '{4}'.", _UriServer.AbsoluteUri, _TimeoutSec, Method, Uri, _ReturnType.GetStringValue()));
-            if(null == Credential) {
+            if(null == Credential) 
+            {
                 Debug.WriteLine(String.Format("No Credential specified."));
             }
             else
@@ -138,16 +141,12 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 }
             }
 
-            // Build base URL
             using (var cl = new HttpClient())
             {
                 char[] achTrim = { '/' };
                 var s = String.Format("{0}/{1}/{2}/", _UriServer.AbsoluteUri.TrimEnd(achTrim), _UriBase.Trim(achTrim), _Version.Trim(achTrim));
                 cl.BaseAddress = new Uri(s);
-
-                // Set timeout
                 cl.Timeout = new TimeSpan(0, 0, _TimeoutSec);
-
                 cl.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
                 cl.DefaultRequestHeaders.Add("Authorization", String.Format(RestHelper.AUTHORIZATIONHEADERFORMAT, _CredentialBase64));
                 cl.DefaultRequestHeaders.Add("User-Agent", RestHelper.USERAGENT);
@@ -202,23 +201,10 @@ namespace biz.dfch.CS.Infoblox.Wapi
                     var contentError = response.Content.ReadAsStringAsync().Result;
                     try
                     {
-                        // TODO replace with NewtonSoft JSON https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/issues/2
-                        var jv = JsonValue.Parse(contentError);
-                        var MessageError = String.Empty;
-                        var MessageCode = String.Empty;
-                        var MessageText = String.Empty;
-                        if (jv.ContainsKey("Error"))
-                        {
-                            MessageError = jv["Error"].ToString();
-                        }
-                        if (jv.ContainsKey("code"))
-                        {
-                            MessageCode = jv["code"].ToString();
-                        }
-                        if (jv.ContainsKey("text"))
-                        {
-                            MessageText = jv["text"].ToString();
-                        }
+                        JToken jv = JObject.Parse(contentError);
+                        var MessageError = jv.SelectToken("Error", true).ToString();
+                        var MessageCode = jv.SelectToken("code", true).ToString();
+                        var MessageText = jv.SelectToken("text", true).ToString(); 
                         Message = String.Format("{0}\r\nCode: {1}\r\nText: {2}", MessageError, MessageCode, MessageText);
                     }
                     catch
