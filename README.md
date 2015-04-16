@@ -9,7 +9,7 @@ d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
 
 This .NET/C# assembly provide a very simple object mapper for the Infoblox WAPI (REST API).
 
-You can download the assembly from [NuGet](https://www.nuget.org/profiles/ronald.rink) at [biz.dfch.PS.Ipam.Infoblox.Api](https://www.nuget.org/packages/biz.dfch.PS.Ipam.Infoblox.Api/). If you prefer to download the DLL directly you can also download it from the repository's [Releases](https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/releases).
+You can download the assembly from [NuGet](https://www.nuget.org/profiles/ronald.rink) at [biz.dfch.PS.Ipam.Infoblox.Api](https://www.nuget.org/packages/biz.dfch.CS.Infoblox.Wapi/). If you prefer to download the DLL directly you can also download it from the repository's [Releases](https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/releases).
 
 This assembly is used by the [PowerShell module biz.dfch.PS.Ipam.Infoblox.Api](https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api) and the [Cumulus Automation Portal](https://github.com/dfch/biz.dfch.CS.Cumulus.Server).
 
