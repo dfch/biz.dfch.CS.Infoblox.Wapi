@@ -10,7 +10,7 @@ using System.Reflection;
 /// Enum With String Values In C# 
 /// http://weblogs.asp.net/stefansedich/archive/2008/03/12/enum-with-string-values-in-c.aspx
 /// 
-namespace StringValueAttributeExtension
+namespace biz.dfch.CS.Infoblox.Wapi
 {
     public static class StringValueAttributeExtension
     {

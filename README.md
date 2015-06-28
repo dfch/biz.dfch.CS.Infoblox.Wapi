@@ -37,6 +37,12 @@ After adding the reference to the project (this would have been done automatical
 	q.Add("_max_return", "2");
 	var s = rest.Invoke("networkview", q);
 
+If you are using this assembly the PowerShell you can also specify the ReturnType as a string:
+
+	rest.ReturnTypeString = 'json-pretty';
+	# or
+	rest.ReturnTypeString = 'JsonPretty';
+
 You can also very easily extract fields from the JSON response via [JSON.Net](http://json.net) and its *LINQ to JSON* feature:
 
 	using Newtonsoft.Json;

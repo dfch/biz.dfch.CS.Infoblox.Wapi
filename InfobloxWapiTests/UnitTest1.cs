@@ -10,131 +10,213 @@ namespace biz.dfch.CS.Infoblox.Wapi
     [TestClass]
     public class UnitTest1
     {
-        private static TestContext _testContext;
-        public TestContext testContext
+        private static TestContext testContext;
+        public TestContext TestContext
         {
             get
             {
-                return _testContext;
+                return testContext;
             }
             set
             {
-                _testContext = value;
+                testContext = value;
             }
         }
 
         [AssemblyInitialize]
-        public static void Configure(TestContext testContext)
+        public static void Configure(TestContext value)
         {
             log4net.Config.XmlConfigurator.Configure();
         }
         [ClassInitialize()]
-        public static void classInitialize(TestContext testContext)
+        public static void ClassInitialize(TestContext value)
         {
-            _testContext = testContext;
-            Trace.WriteLine(String.Format("classInitialize: '{0}'", testContext.TestName));
+            testContext = value;
+            Trace.WriteLine(String.Format("ClassInitialize: '{0}'", testContext.TestName));
         }
 
         [ClassCleanup()]
-        public static void classCleanup()
+        public static void ClassCleanup()
         {
-            Trace.WriteLine("classCleanup");
+            Trace.WriteLine("ClassCleanup");
         }
 
         [TestInitialize()]
-        public void testInitialize()
+        public void TestInitialize()
         {
-            Trace.WriteLine("testInitialize");
+            Trace.WriteLine("TestInitialize");
         }
 
         [TestMethod]
         [ExpectedException(typeof(AggregateException))]
-        public void doConnectWildcardAddressThrowsAggregateException()
+        public void DoConnectWildcardAddressThrowsAggregateException()
         {
-            var Username = "admin";
-            var Password = "infoblox";
-            var UriServer = "https://0.0.0.0/";
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "https://0.0.0.0/";
 
             var rest = new RestHelper();
-            var nc = new System.Net.NetworkCredential(Username, Password);
+            var nc = new System.Net.NetworkCredential(username, password);
             rest.Credential = nc;
-            rest.UriServer = new System.Uri(UriServer);
+            rest.UriServer = new System.Uri(uriServer);
             rest.ReturnType = RestHelper.ReturnTypes.JsonPretty;
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(s));
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void doConnectInvalidSchemeThrowsArgumentException()
+        public void DoConnectInvalidSchemeThrowsArgumentException()
         {
-            var Username = "admin";
-            var Password = "infoblox";
-            var UriServer = "abcd://0.0.0.0/";
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "abcd://0.0.0.0/";
 
             var rest = new RestHelper();
-            var nc = new System.Net.NetworkCredential(Username, Password);
+            var nc = new System.Net.NetworkCredential(username, password);
             rest.Credential = nc;
-            rest.UriServer = new System.Uri(UriServer);
+            rest.UriServer = new System.Uri(uriServer);
             rest.ReturnType = RestHelper.ReturnTypes.JsonPretty;
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(s));
         }
         [TestMethod]
         [ExpectedException(typeof(UriFormatException))]
-        public void doConnectInvalidPortThrowsUriFormatException()
+        public void DoConnectInvalidPortThrowsUriFormatException()
         {
-            var Username = "admin";
-            var Password = "infoblox";
-            var UriServer = "http://127.0.0.1:65536/";
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "http://127.0.0.1:65536/";
 
             var rest = new RestHelper();
-            var nc = new System.Net.NetworkCredential(Username, Password);
+            var nc = new System.Net.NetworkCredential(username, password);
             rest.Credential = nc;
-            rest.UriServer = new System.Uri(UriServer);
+            rest.UriServer = new System.Uri(uriServer);
             rest.ReturnType = RestHelper.ReturnTypes.JsonPretty;
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(s));
         }
         [TestMethod]
         [ExpectedException(typeof(AggregateException))]
-        public void doConnectRefusedPortThrowsAggregateException()
+        public void DoConnectRefusedPortThrowsAggregateException()
         {
-            var Username = "admin";
-            var Password = "infoblox";
-            var UriServer = "http://127.0.0.1:65535/";
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "http://127.0.0.1:65535/";
 
             var rest = new RestHelper();
-            var nc = new System.Net.NetworkCredential(Username, Password);
+            var nc = new System.Net.NetworkCredential(username, password);
             rest.Credential = nc;
-            rest.UriServer = new System.Uri(UriServer);
+            rest.UriServer = new System.Uri(uriServer);
             rest.ReturnType = RestHelper.ReturnTypes.JsonPretty;
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(s));
+        }
+        [TestMethod]
+        public void DoConnectWithReturnTypeEnumReturnsObject()
+        {
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "http://infoblox";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                RestHelper.ReturnTypes.JsonPretty
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            Assert.AreEqual((new System.Uri(uriServer)).AbsoluteUri, rest.UriServer.AbsoluteUri);
+            Assert.AreEqual(version, rest.Version);
+            Assert.AreEqual(timeOutSec, rest.TimeoutSec);
+            Assert.AreEqual(uriBase, rest.UriBase);
+            Assert.AreEqual(RestHelper.ReturnTypes.JsonPretty, rest.ReturnType);
+            Assert.AreEqual(RestHelper.ReturnTypes.JsonPretty.ToString(), rest.ReturnType.ToString());
+            Assert.AreEqual(contentType, rest.ContentType);
+            Assert.AreEqual(username, rest.Credential.UserName);
+            Assert.AreEqual(password, rest.Credential.Password);
+        }
+        [TestMethod]
+        public void DoConnectWithReturnTypeStringReturnsObject()
+        {
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "http://infoblox";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var returnType = "json-pretty";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                returnType
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            Assert.AreEqual((new System.Uri(uriServer)).AbsoluteUri, rest.UriServer.AbsoluteUri);
+            Assert.AreEqual(version, rest.Version);
+            Assert.AreEqual(timeOutSec, rest.TimeoutSec);
+            Assert.AreEqual(uriBase, rest.UriBase);
+            Assert.AreEqual(RestHelper.ReturnTypes.JsonPretty, rest.ReturnType);
+            Assert.AreEqual(RestHelper.ReturnTypes.JsonPretty.ToString(), rest.ReturnType.ToString());
+            Assert.AreEqual(returnType, rest.ReturnType.GetStringValue());
+            Assert.AreEqual(returnType, rest.ReturnTypeString);
+            Assert.AreEqual(contentType, rest.ContentType);
+            Assert.AreEqual(username, rest.Credential.UserName);
+            Assert.AreEqual(password, rest.Credential.Password);
         }
         [TestMethod]
         [ExpectedException(typeof(AggregateException))]
-        public void doConnectRefusedAddressThrowsAggregateException()
+        public void DoConnectRefusedAddressThrowsAggregateException()
         {
-            var Username = "admin";
-            var Password = "infoblox";
-            var UriServer = "http://1.1.1.1/";
+            var username = "admin";
+            var password = "infoblox";
+            var uriServer = "http://1.1.1.1/";
 
             var rest = new RestHelper();
-            var nc = new System.Net.NetworkCredential(Username, Password);
+            var nc = new System.Net.NetworkCredential(username, password);
             rest.Credential = nc;
-            rest.UriServer = new System.Uri(UriServer);
+            rest.UriServer = new System.Uri(uriServer);
             rest.ReturnType = RestHelper.ReturnTypes.JsonPretty;
 
             var q = new Hashtable();
             var s = rest.Invoke("networkview", q);
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(s));
         }
         [TestMethod]
         [ExpectedException(typeof(JsonException))]
-        public void doParseMissingContentFieldThrowsJsonException()
+        public void DoParseMissingContentFieldThrowsJsonException()
         {
             var contentError = @"
                 {
@@ -146,11 +228,12 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 }
             ";
             JToken jv = JObject.Parse(contentError);
-            var MessageError = jv.SelectToken("Error", true).ToString();
+            var messageError = jv.SelectToken("Error", true).ToString();
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(messageError));
         }
         [TestMethod]
         [ExpectedException(typeof(JsonReaderException))]
-        public void doParseInvalidJsonThrowsJsonReaderException()
+        public void DoParseInvalidJsonThrowsJsonReaderException()
         {
             var contentError = @"
                 {
@@ -158,10 +241,11 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 }
             ";
             JToken jv = JObject.Parse(contentError);
-            var MessageError = jv.SelectToken("Error", true).ToString();
+            var messageError = jv.SelectToken("Error", true).ToString();
+            Assert.IsTrue(!String.IsNullOrWhiteSpace(messageError));
         }
         [TestMethod]
-        public void doParseContentErrorReturnsTrue()
+        public void DoParseContentErrorReturnsTrue()
         {
             var contentError = @"
                 {
@@ -173,12 +257,12 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 }
             ";
             JToken jv = JObject.Parse(contentError);
-            var MessageError = jv.SelectToken("Error", true).ToString();
-            var MessageCode = jv.SelectToken("code", true).ToString();
-            var MessageText = jv.SelectToken("text", true).ToString();
-            Assert.IsNotNull(MessageError);
-            Assert.IsNotNull(MessageCode);
-            Assert.IsNotNull(MessageText);
+            var messageError = jv.SelectToken("Error", true).ToString();
+            var messageCode = jv.SelectToken("code", true).ToString();
+            var messageText = jv.SelectToken("text", true).ToString();
+            Assert.IsNotNull(messageError);
+            Assert.IsNotNull(messageCode);
+            Assert.IsNotNull(messageText);
         }
     }
 }
