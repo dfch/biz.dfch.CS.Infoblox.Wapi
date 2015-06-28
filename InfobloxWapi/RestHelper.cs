@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using StringValueAttributeExtension;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -17,6 +16,7 @@ namespace biz.dfch.CS.Infoblox.Wapi
         private const String VERSION = "v1.2.1";
         private const String CONTENTTYPE = "application/json";
         private const ReturnTypes RETURNTYPE = ReturnTypes.Default;
+        private const String RETURNTYPESTRING = "default";
         private const String AUTHORIZATIONHEADERFORMAT = "Basic {0}";
         private const String USERAGENT = "d-fens biz.dfch.CS.Infoblox.Wapi.RestHelper";
 
@@ -43,6 +43,11 @@ namespace biz.dfch.CS.Infoblox.Wapi
         {
             get { return _ReturnType;  }
             set { _ReturnType = value; }
+        }
+        public String ReturnTypeString
+        {
+            get { return _ReturnType.GetStringValue(); }
+            set { _ReturnType = EnumUtil.Parse<ReturnTypes>(value); }
         }
 
         private String _ContentType;
@@ -75,18 +80,20 @@ namespace biz.dfch.CS.Infoblox.Wapi
         private String _CredentialBase64;
         public NetworkCredential Credential
         {
-            get {
+            get 
+            {
                 return _Credential; 
             }
-            set { 
+            set 
+            { 
                 _Credential = value ?? (new NetworkCredential(String.Empty, String.Empty)); 
                 var abCredential = System.Text.UTF8Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _Credential.UserName, _Credential.Password));
                 _CredentialBase64 = Convert.ToBase64String(abCredential);
             }
         }
-        public void SetCredential(String Username, String Password) 
+        public void SetCredential(String username, String password) 
         {
-            this.Credential = new NetworkCredential(Username, Password);
+            this.Credential = new NetworkCredential(username, password);
         }
 
         private int _TimeoutSec;
@@ -240,38 +247,38 @@ namespace biz.dfch.CS.Infoblox.Wapi
         }
         #endregion
 
-        public String GetNetwork(String Network)
+        public String GetNetwork(String network)
         {
             var result = String.Empty;
             var q = new Hashtable();
             q.Add("_return_fields%2B", "extattrs");
-            if (Network.StartsWith("network"))
+            if (network.StartsWith("network"))
             {
-                result = this.Invoke(Network, q);
+                result = this.Invoke(network, q);
             }
             else
             {
-                q.Add("network", Network);
+                q.Add("network", network);
                 result = this.Invoke("network", q);
             }
             return result;
         }
-        public String GetNetwork(String Network, int SubnetMask)
+        public String GetNetwork(String network, int subnetMask)
         {
-            return this.GetNetwork(String.Format("{0}/{1}", Network, SubnetMask));
+            return this.GetNetwork(String.Format("{0}/{1}", network, subnetMask));
         }
 
-        public String GetNetwork(String Network, String SubnetMask)
+        public String GetNetwork(String network, String subnetMask)
         {
-            var ip = IPAddress.Parse(SubnetMask);
+            var ip = IPAddress.Parse(subnetMask);
             UInt32 j = (UInt32) ip.Address;
-            var MaskLength = 0;
+            var maskLength = 0;
             while (j != 0)
             {
                 j = j >> 1;
-                MaskLength++;
+                maskLength++;
             }
-            return this.GetNetwork(Network, MaskLength);
+            return this.GetNetwork(network, maskLength);
         }
         #region Constructor And Initialisation
         public RestHelper()
@@ -279,41 +286,57 @@ namespace biz.dfch.CS.Infoblox.Wapi
             this.Initialise(null, RestHelper.VERSION, RestHelper.TIMEOUTSEC, RestHelper.URIBASE, RestHelper.RETURNTYPE, RestHelper.CONTENTTYPE);
         }
         public RestHelper(
-            Uri UriServer
+            Uri uriServer
             ,
-            String Version = RestHelper.VERSION
+            String version = RestHelper.VERSION
             ,
-            int TimeoutSec = RestHelper.TIMEOUTSEC
+            int timeoutSec = RestHelper.TIMEOUTSEC
             ,
-            String UriBase = RestHelper.URIBASE
+            String uriBase = RestHelper.URIBASE
             ,
-            ReturnTypes ReturnType = RestHelper.RETURNTYPE
+            String returnTypeString = RestHelper.RETURNTYPESTRING
             ,
-            String ContentType = RestHelper.CONTENTTYPE
+            String contentType = RestHelper.CONTENTTYPE
             )
         {
-            this.Initialise(UriServer, Version, TimeoutSec, UriBase, ReturnType, ContentType);
+            this.Initialise(uriServer, version, timeoutSec, uriBase, EnumUtil.Parse<ReturnTypes>(returnTypeString), contentType);
+        }
+        public RestHelper(
+            Uri uriServer
+            ,
+            String version = RestHelper.VERSION
+            ,
+            int timeoutSec = RestHelper.TIMEOUTSEC
+            ,
+            String uriBase = RestHelper.URIBASE
+            ,
+            ReturnTypes returnType = RestHelper.RETURNTYPE
+            ,
+            String contentType = RestHelper.CONTENTTYPE
+            )
+        {
+            this.Initialise(uriServer, version, timeoutSec, uriBase, returnType, contentType);
         }
         private void Initialise(
-            Uri UriServer
+            Uri uriServer
             ,
-            String Version
+            String version
             ,
-            int TimeoutSec
+            int timeoutSec
             ,
-            String UriBase
+            String uriBase
             ,
-            ReturnTypes ReturnType
+            ReturnTypes returnType
             ,
-            String ContentType
+            String contentType
             )
         {
-            this.UriServer = UriServer;
-            this.Version = Version;
-            this.TimeoutSec = TimeoutSec;
-            this.UriBase = UriBase;
-            this.ReturnType = ReturnType;
-            this.ContentType = ContentType;
+            this.UriServer = uriServer;
+            this.Version = version;
+            this.TimeoutSec = timeoutSec;
+            this.UriBase = uriBase;
+            this.ReturnType = returnType;
+            this.ContentType = contentType;
             this.Credential = null;
         }
         #endregion

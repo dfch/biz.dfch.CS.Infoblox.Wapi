@@ -4,32 +4,35 @@
 /// This attribute is used to represent a string value
 /// for a value in an enum.
 /// </summary>
-[AttributeUsage(AttributeTargets.Field)]
-public class StringValueAttribute : Attribute
+namespace biz.dfch.CS.Infoblox.Wapi
 {
-
-    #region Properties
-
-    /// <summary>
-    /// Holds the stringvalue for a value in an enum.
-    /// </summary>
-    public String StringValue { get; protected set; }
-
-    #endregion
-
-    #region Constructor
-
-    /// <summary>
-    /// Constructor used to init a StringValue Attribute
-    /// </summary>
-    /// <param name="value"></param>
-    public StringValueAttribute(String value)
+    [AttributeUsage(AttributeTargets.Field)]
+    public class StringValueAttribute : Attribute
     {
-        this.StringValue = value;
+
+        #region Properties
+
+        /// <summary>
+        /// Holds the stringvalue for a value in an enum.
+        /// </summary>
+        public String StringValue { get; protected set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor used to init a StringValue Attribute
+        /// </summary>
+        /// <param name="value"></param>
+        public StringValueAttribute(String value)
+        {
+            this.StringValue = value;
+        }
+
+        #endregion
+
     }
-
-    #endregion
-
 }
 
 /**
