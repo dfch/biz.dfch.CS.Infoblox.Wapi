@@ -18,7 +18,7 @@ Usage
 
 You install the package via NuGet:
 
-	Install-Package biz.dfch.PS.Ipam.Infoblox.Api
+	Install-Package biz.dfch.CS.Infoblox.Wapi
 
 After adding the reference to the project (this would have been done automatically via NuGet) you can instantiate the the `RestHelper` object and submit arbitrary queries to your Infoblox server:
 
