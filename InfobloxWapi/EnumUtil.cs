@@ -38,7 +38,6 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 Type type = typeof(T);
                 foreach (var v in values)
                 {
-                    System.Threading.Thread.Sleep(100);
                     var fieldInfo = type.GetField(v.ToString());
                     StringValueAttribute[] attribs = fieldInfo.GetCustomAttributes
                         (
