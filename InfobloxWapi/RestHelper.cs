@@ -113,25 +113,25 @@ namespace biz.dfch.CS.Infoblox.Wapi
 
         #region Invoke
         public String Invoke(
-            String Method
+            String method
             ,
-            String Uri
+            String uri
             ,
-            Hashtable QueryParameters
+            Hashtable queryParameters
             ,
-            Hashtable Headers
+            Hashtable headers
             ,
-            String Body
+            String body
             )
         {
             // Parameter validation
-            if (String.IsNullOrWhiteSpace(Method)) throw new ArgumentException(String.Format("Method: Parameter validation FAILED. Parameter cannot be null or empty."), "Method");
-            if (String.IsNullOrWhiteSpace(Uri)) throw new ArgumentException(String.Format("Uri: Parameter validation FAILED. Parameter cannot be null or empty."), "Uri");
+            if (String.IsNullOrWhiteSpace(method)) throw new ArgumentException(String.Format("Method: Parameter validation FAILED. Parameter cannot be null or empty."), "Method");
+            if (String.IsNullOrWhiteSpace(uri)) throw new ArgumentException(String.Format("Uri: Parameter validation FAILED. Parameter cannot be null or empty."), "Uri");
 
-            Headers = Headers ?? (new Hashtable());
-            QueryParameters = QueryParameters ?? (new Hashtable());
+            headers = headers ?? (new Hashtable());
+            queryParameters = queryParameters ?? (new Hashtable());
 
-            Debug.WriteLine(String.Format("Invoke: UriServer '{0}'. TimeoutSec '{1}'. Method '{2}'. Uri '{3}'. ReturnType '{4}'.", _UriServer.AbsoluteUri, _TimeoutSec, Method, Uri, _ReturnType.GetStringValue()));
+            Debug.WriteLine(String.Format("Invoke: UriServer '{0}'. TimeoutSec '{1}'. Method '{2}'. Uri '{3}'. ReturnType '{4}'.", _UriServer.AbsoluteUri, _TimeoutSec, method, uri, _ReturnType.GetStringValue()));
             if(null == Credential) 
             {
                 Debug.WriteLine(String.Format("No Credential specified."));
@@ -159,7 +159,7 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 cl.DefaultRequestHeaders.Add("User-Agent", RestHelper.USERAGENT);
 
                 var QueryParametersString = "?";
-                foreach (DictionaryEntry item in QueryParameters)
+                foreach (DictionaryEntry item in queryParameters)
                 {
                     QueryParametersString += String.Format("{0}={1}&", item.Key, item.Value);
                 }
@@ -168,57 +168,57 @@ namespace biz.dfch.CS.Infoblox.Wapi
 
                 // Invoke request
                 HttpResponseMessage response;
-                var _Method = new HttpMethod(Method);
-                Uri += QueryParametersString;
+                var _method = new HttpMethod(method);
+                uri += QueryParametersString;
                 char[] achTrimQuestion = { '?' };
-                Uri = Uri.TrimEnd(achTrimQuestion);
-                switch (_Method.ToString().ToUpper())
+                uri = uri.TrimEnd(achTrimQuestion);
+                switch (_method.ToString().ToUpper())
                 {
                     case "GET":
                     case "HEAD":
-                        response = cl.GetAsync(Uri).Result;
+                        response = cl.GetAsync(uri).Result;
                         break;
                     case "POST":
                         {
-                            var _Body = new StringContent(Body);
-                            _Body.Headers.ContentType = new MediaTypeHeaderValue(_ContentType);
-                            response = cl.PostAsync(Uri, _Body).Result;
+                            var _body = new StringContent(body);
+                            _body.Headers.ContentType = new MediaTypeHeaderValue(_ContentType);
+                            response = cl.PostAsync(uri, _body).Result;
                         }
                         break;
                     case "PUT":
                         {
-                            var payload = new StringContent(Body);
-                            payload.Headers.ContentType = new MediaTypeHeaderValue(_ContentType);
-                            response = cl.PutAsync(Uri, payload).Result;
+                            var _body = new StringContent(body);
+                            _body.Headers.ContentType = new MediaTypeHeaderValue(_ContentType);
+                            response = cl.PutAsync(uri, _body).Result;
                         }
                         break;
                     case "DELETE":
-                        response = cl.DeleteAsync(Uri).Result;
+                        response = cl.DeleteAsync(uri).Result;
                         break;
                     default:
                         throw new NotImplementedException();
                 }
                 if (response.StatusCode.Equals(HttpStatusCode.Unauthorized))
                 {
-                    throw new UnauthorizedAccessException(String.Format("Invoking '{0}' with username '{1}' FAILED.", Uri, _Credential.UserName));
+                    throw new UnauthorizedAccessException(String.Format("Invoking '{0}' with username '{1}' FAILED.", uri, _Credential.UserName));
                 }
                 if (response.StatusCode.Equals(HttpStatusCode.BadRequest))
                 {
-                    var Message = String.Empty;
+                    var message = String.Empty;
                     var contentError = response.Content.ReadAsStringAsync().Result;
                     try
                     {
                         JToken jv = JObject.Parse(contentError);
-                        var MessageError = jv.SelectToken("Error", true).ToString();
-                        var MessageCode = jv.SelectToken("code", true).ToString();
-                        var MessageText = jv.SelectToken("text", true).ToString(); 
-                        Message = String.Format("{0}\r\nCode: {1}\r\nText: {2}", MessageError, MessageCode, MessageText);
+                        var messageError = jv.SelectToken("Error", true).ToString();
+                        var messageCode = jv.SelectToken("code", true).ToString();
+                        var messageText = jv.SelectToken("text", true).ToString(); 
+                        message = String.Format("{0}\r\nCode: {1}\r\nText: {2}", messageError, messageCode, messageText);
                     }
                     catch
                     {
-                        Message = contentError;
+                        message = contentError;
                     }
-                    throw new ArgumentException(Message);
+                    throw new ArgumentException(message);
                 }
                 response.EnsureSuccessStatusCode();
 
@@ -231,19 +231,19 @@ namespace biz.dfch.CS.Infoblox.Wapi
         }
 
         public String Invoke(
-            String Uri
+            String uri
             ,
-            Hashtable QueryParameters
+            Hashtable queryParameters
             )
         {
-            return this.Invoke(HttpMethod.Get.ToString(), Uri, QueryParameters, null, null);
+            return this.Invoke(HttpMethod.Get.ToString(), uri, queryParameters, null, null);
         }
 
         public String Invoke(
-            String Uri
+            String uri
             )
         {
-            return this.Invoke(HttpMethod.Get.ToString(), Uri, null, null, null);
+            return this.Invoke(HttpMethod.Get.ToString(), uri, null, null, null);
         }
         #endregion
 

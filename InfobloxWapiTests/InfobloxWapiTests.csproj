@@ -59,8 +59,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="LogBase.cs" />
-    <Compile Include="LogDebug.cs" />
-    <Compile Include="LogTrace.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="Trace.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
