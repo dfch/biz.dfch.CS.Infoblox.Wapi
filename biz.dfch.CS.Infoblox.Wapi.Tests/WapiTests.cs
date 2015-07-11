@@ -205,7 +205,7 @@ namespace biz.dfch.CS.Infoblox.Wapi
         {
             var username = "any-user";
             var password = "any-password";
-            var uriServer = "http://1.1.1.1/";
+            var uriServer = "http://any-server.example.com/";
 
             var rest = new RestHelper();
             var nc = new System.Net.NetworkCredential(username, password);
