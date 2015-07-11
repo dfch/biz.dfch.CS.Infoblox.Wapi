@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("InfobloxWapiTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("biz.dfch.CS.Infoblox.Wapi.Tests")]
 
 namespace biz.dfch.CS.Infoblox.Wapi
 {

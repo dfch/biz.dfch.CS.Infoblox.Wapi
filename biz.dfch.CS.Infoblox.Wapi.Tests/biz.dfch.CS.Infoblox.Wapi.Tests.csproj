@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>biz.dfch.CS.Infoblox.Wapi</RootNamespace>
-    <AssemblyName>InfobloxWapiTests</AssemblyName>
+    <AssemblyName>biz.dfch.CS.Infoblox.Wapi.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -44,6 +44,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Telerik.JustMock">
+      <HintPath>../JustMock/Telerik.JustMock.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -61,16 +65,16 @@
     <Compile Include="LogBase.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="Trace.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="WapiTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InfobloxWapi\InfobloxWapi.csproj">
+    <ProjectReference Include="..\biz.dfch.CS.Infoblox.Wapi\biz.dfch.CS.Infoblox.Wapi.csproj">
       <Project>{0b2c5e29-615e-4bf6-a357-787f54956c8e}</Project>
-      <Name>InfobloxWapi</Name>
+      <Name>biz.dfch.CS.Infoblox.Wapi</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

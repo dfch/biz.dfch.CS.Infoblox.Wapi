@@ -158,18 +158,18 @@ namespace biz.dfch.CS.Infoblox.Wapi
                 cl.DefaultRequestHeaders.Add("Authorization", String.Format(RestHelper.AUTHORIZATIONHEADERFORMAT, _CredentialBase64));
                 cl.DefaultRequestHeaders.Add("User-Agent", RestHelper.USERAGENT);
 
-                var QueryParametersString = "?";
+                var queryParametersString = "?";
                 foreach (DictionaryEntry item in queryParameters)
                 {
-                    QueryParametersString += String.Format("{0}={1}&", item.Key, item.Value);
+                    queryParametersString += String.Format("{0}={1}&", item.Key, item.Value);
                 }
                 char[] achTrimAmp = { '&' };
-                QueryParametersString = QueryParametersString.TrimEnd(achTrimAmp);
+                queryParametersString = queryParametersString.TrimEnd(achTrimAmp);
 
                 // Invoke request
                 HttpResponseMessage response;
                 var _method = new HttpMethod(method);
-                uri += QueryParametersString;
+                uri += queryParametersString;
                 char[] achTrimQuestion = { '?' };
                 uri = uri.TrimEnd(achTrimQuestion);
                 switch (_method.ToString().ToUpper())
@@ -196,7 +196,7 @@ namespace biz.dfch.CS.Infoblox.Wapi
                         response = cl.DeleteAsync(uri).Result;
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException(String.Format("{0}: Method not implemented. Currently only the following methods are implemented: 'GET', 'HEAD', 'POST', 'PUT', 'DELETE'.", _method.ToString().ToUpper()));
                 }
                 if (response.StatusCode.Equals(HttpStatusCode.Unauthorized))
                 {

@@ -1,14 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections;
+using System.Net;
+using System.Net.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections;
+using Telerik.JustMock;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "InfobloxWapiTests.dll.config", Watch = true)]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "biz.dfch.CS.Infoblox.Wapi.Tests.dll.config", Watch = true)]
 namespace biz.dfch.CS.Infoblox.Wapi
 {
     [TestClass]
-    public class UnitTest1
+    public class WapiTests
     {
         private static TestContext testContext;
         public TestContext TestContext
@@ -51,8 +54,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [ExpectedException(typeof(AggregateException))]
         public void DoConnectWildcardAddressThrowsAggregateException()
         {
-            var username = "admin";
-            var password = "infoblox";
+            var username = "any-user";
+            var password = "any-password";
             var uriServer = "https://0.0.0.0/";
 
             var rest = new RestHelper();
@@ -69,8 +72,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [ExpectedException(typeof(ArgumentException))]
         public void DoConnectInvalidSchemeThrowsArgumentException()
         {
-            var username = "admin";
-            var password = "infoblox";
+            var username = "any-user";
+            var password = "any-password";
             var uriServer = "abcd://0.0.0.0/";
 
             var rest = new RestHelper();
@@ -87,8 +90,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [ExpectedException(typeof(UriFormatException))]
         public void DoConnectInvalidPortThrowsUriFormatException()
         {
-            var username = "admin";
-            var password = "infoblox";
+            var username = "any-user";
+            var password = "any-password";
             var uriServer = "http://127.0.0.1:65536/";
 
             var rest = new RestHelper();
@@ -105,8 +108,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [ExpectedException(typeof(AggregateException))]
         public void DoConnectRefusedPortThrowsAggregateException()
         {
-            var username = "admin";
-            var password = "infoblox";
+            var username = "any-user";
+            var password = "any-password";
             var uriServer = "http://127.0.0.1:65535/";
 
             var rest = new RestHelper();
@@ -122,9 +125,9 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [TestMethod]
         public void DoConnectWithReturnTypeEnumReturnsObject()
         {
-            var username = "admin";
-            var password = "infoblox";
-            var uriServer = "http://infoblox";
+            var username = "any-user";
+            var password = "any-password";
+            var uriServer = "http://any-server.example.com";
             var contentType = "application/json";
             var uriBase = "wapi";
             var version = "v1.2.1";
@@ -159,9 +162,9 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [TestMethod]
         public void DoConnectWithReturnTypeStringReturnsObject()
         {
-            var username = "admin";
-            var password = "infoblox";
-            var uriServer = "http://infoblox";
+            var username = "any-user";
+            var password = "any-password";
+            var uriServer = "http://any-server.example.com";
             var contentType = "application/json";
             var uriBase = "wapi";
             var returnType = "json-pretty";
@@ -200,8 +203,8 @@ namespace biz.dfch.CS.Infoblox.Wapi
         [ExpectedException(typeof(AggregateException))]
         public void DoConnectRefusedAddressThrowsAggregateException()
         {
-            var username = "admin";
-            var password = "infoblox";
+            var username = "any-user";
+            var password = "any-password";
             var uriServer = "http://1.1.1.1/";
 
             var rest = new RestHelper();
@@ -263,6 +266,234 @@ namespace biz.dfch.CS.Infoblox.Wapi
             Assert.IsNotNull(messageError);
             Assert.IsNotNull(messageCode);
             Assert.IsNotNull(messageText);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void InvokeWithUnsupportedMethodThrowsNotImplementedException()
+        {
+            var username = "any-user";
+            var password = "any-password";
+            var uriServer = "http://any-server.example.com";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var returnType = "json-pretty";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                returnType
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            var result = rest.Invoke("PATCH", "any-uri", null, null, null);
+
+            Assert.Fail("ERROR: Reaching this point means a previous expected error has not occurred.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(UnauthorizedAccessException))]
+        public void InvokeWithInvalidCredentialsThrowsUnauthorizedAccessException()
+        {
+
+            // Arrange
+            var username = "any-user";
+            var password = "invalid-password";
+            var uriServer = "http://any-server.example.com";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var returnType = "json-pretty";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+            var uri = "networkview";
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                returnType
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            var cl = Mock.Create<HttpClient>();
+            var task = Mock.Create<System.Threading.Tasks.Task<HttpResponseMessage>>();
+
+            Mock.Arrange(() => cl.GetAsync(Arg.AnyString))
+                .IgnoreInstance()
+                .Returns(task);
+            Mock.Arrange(() => cl.GetAsync(Arg.AnyString).Result.StatusCode)
+                .IgnoreInstance()
+                .Returns(HttpStatusCode.Unauthorized);
+            
+            // Act
+            var result = rest.Invoke("GET", uri, null, null, null);
+
+            // Assert
+            Assert.Fail("ERROR: Reaching this point means a previous expected error has not occurred.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void InvokeWithInvalidRequestThrowsArgumentException()
+        {
+            // Arrange
+            var content = @"
+                {
+                    'Error' : 'someError'
+                    , 
+                    'text' : 'someText'
+                    , 
+                    'code' : 42
+                }
+            ";
+            var username = "any-user";
+            var password = "any-password";
+            var uriServer = "http://any-server.example.com";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var returnType = "json-pretty";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+            var uri = "invalid-uri";
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                returnType
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            var cl = Mock.Create<HttpClient>();
+            var task = Mock.Create<System.Threading.Tasks.Task<HttpResponseMessage>>();
+
+            Mock.Arrange(() => cl.GetAsync(Arg.AnyString))
+                .IgnoreInstance()
+                .Returns(task);
+            Mock.Arrange(() => cl.GetAsync(Arg.AnyString).Result.StatusCode)
+                .IgnoreInstance()
+                .Returns(HttpStatusCode.BadRequest);
+            Mock.Arrange(() => cl.GetAsync(Arg.AnyString).Result.Content.ReadAsStringAsync().Result)
+                .IgnoreInstance()
+                .Returns(content);
+
+            // Act
+            try
+            {
+                var result = rest.Invoke("GET", uri, null, null, null);
+            }
+
+            // Assert
+            catch(ArgumentException ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("someError"));
+                Assert.IsTrue(ex.Message.Contains("Code: 42"));
+                Assert.IsTrue(ex.Message.Contains("Text: someText"));
+                throw;
+            }
+
+            Assert.Fail("ERROR: Reaching this point means a previous expected error has not occurred.");
+        }
+
+        [TestMethod]
+        public void InvokeGetNetworkViewReturnsString()
+        {
+            // Arrange
+            var content = @"
+                [{
+                    '_ref': 'networkview/AbcdEfghIjlkMnopQrstUvwx:default/true',
+                    'is_default': true,
+                    'name': 'default'
+                },
+                {
+                    '_ref': 'networkview/AbcdEfghIjlkMnopQr/false',
+                    'is_default': false,
+                    'name': 'example_net'
+                }]
+            ";
+            var username = "any-user";
+            var password = "any-password";
+            var uriServer = "http://any-server.example.com";
+            var contentType = "application/json";
+            var uriBase = "wapi";
+            var returnType = "json-pretty";
+            var version = "v1.2.1";
+            var timeOutSec = 90;
+            var uri = "networkview";
+
+            var rest = new RestHelper(
+                new System.Uri(uriServer)
+                ,
+                version
+                ,
+                timeOutSec
+                ,
+                uriBase
+                ,
+                returnType
+                ,
+                contentType
+                );
+            var nc = new System.Net.NetworkCredential(username, password);
+            rest.Credential = nc;
+
+            var httpClient = Mock.Create<HttpClient>();
+            var task = Mock.Create<System.Threading.Tasks.Task<HttpResponseMessage>>();
+            var httpResponseMessage = Mock.Create<HttpResponseMessage>();
+
+            Mock.Arrange(() => httpClient.GetAsync(Arg.AnyString))
+                .IgnoreInstance()
+                .Returns(task);
+            Mock.Arrange(() => httpClient.GetAsync(Arg.AnyString).Result.StatusCode)
+                .IgnoreInstance()
+                .Returns(HttpStatusCode.OK);
+            Mock.Arrange(() => httpClient.GetAsync(Arg.AnyString).Result.EnsureSuccessStatusCode())
+                .IgnoreInstance()
+                .DoNothing();
+            Mock.Arrange(() => httpClient.GetAsync(Arg.AnyString).Result.Content.ReadAsStringAsync().Result)
+                .IgnoreInstance()
+                .Returns(content);
+
+            // Act
+            var result = rest.Invoke("GET", uri, null, null, null);
+
+            // Assert
+            var jArray = JArray.Parse(content);
+            Assert.AreEqual(2, jArray.Count);
+
+            Assert.AreEqual("networkview/AbcdEfghIjlkMnopQrstUvwx:default/true", jArray[0].SelectToken("_ref", true).ToString());
+            Assert.AreEqual(true, jArray[0].SelectToken("is_default", true));
+            Assert.AreEqual("default", jArray[0].SelectToken("name", true).ToString());
+
+            Assert.AreEqual("networkview/AbcdEfghIjlkMnopQr/false", jArray[1].SelectToken("_ref", true).ToString());
+            Assert.AreEqual(false, jArray[1].SelectToken("is_default", true));
+            Assert.AreEqual("example_net", jArray[1].SelectToken("name", true).ToString());
         }
     }
 }

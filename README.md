@@ -55,4 +55,4 @@ You can also very easily extract fields from the JSON response via [JSON.Net](ht
 
 Most of the time when something goes wrong (i.e. your query is malformed) Infoblox will just return with an `HTTP 400`. You will then have to look at the response to get further information. The assembly will throw an exception and extract the error parameters for you.
 
-For further information have a look at the [UnitTests](/InfobloxWapiTests/UnitTest1.cs) that are part of the repository.
+For further information have a look at the [unit tests](https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/blob/master/biz.dfch.CS.Infoblox.Wapi.Tests/WapiTests.cs) that are part of the repository.
