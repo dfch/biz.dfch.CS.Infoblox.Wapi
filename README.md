@@ -1,6 +1,10 @@
 biz.dfch.CS.Infoblox.Wapi
 =========================
 
+[![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/dfch/biz.dfch.CS.Infoblox.Wapi/blob/master/LICENSE)
+![NuGet downloads](https://img.shields.io/nuget/dt/biz.dfch.CS.Infoblox.Wapi.svg)
+![Version](https://img.shields.io/nuget/v/biz.dfch.CS.Infoblox.Wapi.svg)
+
 Object Mapper for IPAM Infoblox REST API
 
 Module: biz.dfch.CS.Infoblox.Wapi
